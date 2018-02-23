@@ -17,10 +17,14 @@
             <button type="submit">Add item</button>
         </form>
         <lable>Sort By:</lable>
-        <select>
-            <option value="alphabetically">alphabet</option>
+        <select id="sort-options">
+            <option value="alpha">alphabet</option>
             <option value="date">date</option>
         </select>
+        <form id="js-shopping-list-search">
+            <input type="text" name="shopping-list-search-entry" class="js-shopping-list-search-entry" placeholder="enter search item here">
+            <button type="submit">Search for item</button>
+        </form>
         <ul class="shopping-list js-shopping-list">
         </ul>
     </div>

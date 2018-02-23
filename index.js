@@ -1,19 +1,22 @@
 'use strict';
 
-const STORE =[
-  {name:"apples",checked:false},
-  {name:"oranges",checked:false},
-  {name:"milk",checked:true},
-  {name:"bread",checked:false}
-
-];
+const STORE = {
+  items: [
+  {name:'apples', checked:false, createdAt: new Date(Date.now() - 100000), id: 1},
+  {name:'oranges', checked:false, createdAt: new Date(Date.now() - 200000), id: 2},
+  {name:'milk', checked:true, createdAt: new Date(Date.now() - 400000), id: 3},
+  {name:'bread', checked:false, createdAt: new Date(Date.now() - 300000), id: 4}
+  ],
+  sortBy: 'alpha',
+};
 
 // dynamically create items for shopping list
 
-function generateItemElement(item, itemIndex, template) {
+// <span class="timestamp">${getTimeString(item.createdAt)}</span>
+
+function generateItemElement(item, itemIndex) {
   return `
-  <li class = "js-item-index-element"
-  data-item-index="${itemIndex}">
+  <li class = "js-item-index-element" data-item-index="${item.id}">
     <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
     <div class="shopping-item-controls">
       <button class="shopping-item-toggle js-item-toggle">
@@ -22,10 +25,20 @@ function generateItemElement(item, itemIndex, template) {
       <button class="shopping-item-delete js-item-delete">
         <span class="button-label">delete</span>
       </button>
+      <form id="js-shopping-list-edit-entry">
+        <button type="submit">Edit item</button>
+          <input type="text" name="shopping-list-edit-entry" class="js-shopping-list-edit-entry" placeholder="New title">
+      </form>
     </div>
   </li>
   `;
 }
+
+// figure out what time to display
+
+// function getTimeString(time) {
+//   return strftime('%b-%d %H:%M', time);
+// }
 
 // make a string of shopping list items
 
@@ -38,11 +51,28 @@ function generateShoppingItemsString(shoppingList){
 
 // render shopping list function to the DOM
 
-function renderShoppingList() {
+function renderShoppingList(list) {
 
   console.log('`renderShoppingList` ran');
 
-  const shoppingListItemsString = generateShoppingItemsString(STORE);
+  let filteredItems = [ ...STORE.items ];
+
+  if (list) {
+    filteredItems = [ ...list];
+  }
+
+  console.log(filteredItems);
+
+  switch(STORE.sortBy) {
+    case 'alpha':
+      filteredItems = filteredItems.sort((a, b) => a.name > b.name);
+      break;
+    case 'time':
+      filteredItems = filteredItems.sort((a, b) => a.createdAt > b.createdAt);
+  }
+
+  const shoppingListItemsString = generateShoppingItemsString(filteredItems);
+
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
@@ -51,7 +81,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false});
+  STORE.items.push({name: itemName, checked: false, createdAt: new Date(), id: STORE.items.length + 1});
 }
 
 // create new item on shopping list 
@@ -67,10 +97,12 @@ function handleNewItemSubmit() {
   });
 }
 
-function toggleCheckedForListItem(itemIndex) {
-  console.log("Toggling checked property for item at index " + itemIndex);
-  STORE[itemIndex].checked = !STORE[itemIndex].checked;
+function toggleCheckedForListItem(itemID) {
+  console.log('Toggling checked property for item at index ' + itemID);
+  STORE.items.find(item => item.id === itemID).checked = !STORE.items.find(item => item.id === itemID).checked;
 }
+
+// figure out what the index of the item is in STORE
 
 function getItemIndexFromElement(item) {
   const itemIndexString = $(item)
@@ -87,16 +119,16 @@ function handleItemCheckClicked() {
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     toggleCheckedForListItem(itemIndex);
     renderShoppingList();
-  })
+  });
 }
 
 // delete an item from STORE
 
-function removeItemFromList(itemIndex) {
-  STORE.splice(itemIndex, 1);
+function removeItemFromList(itemID) {
+  STORE.items = STORE.items.filter(item => item.id !== itemID);
 }
 
-// delete items from shopping list
+// handle delete item from shopping list
 
 function handleDeleteItemClicked() {
   $('.js-shopping-list').on('click', '.js-item-delete', event => {
@@ -107,6 +139,46 @@ function handleDeleteItemClicked() {
   });
 }
 
+// change sort by value of STORE
+
+function changeSortBy(sortBy) {
+  STORE.sortBy = sortBy;
+}
+
+// handle sorting
+
+function handleSortChange() {
+  $('#sort-options').change(event => {
+    // get DOM info about action
+    const option = $(event.currentTarget).find('option:selected').val();
+    // change store
+    changeSortBy(option);
+    // render
+    renderShoppingList();
+  });
+}
+
+// search for item
+
+function itemSearch() {
+  let item = $('.js-shopping-list-search-entry').val();
+  console.log(item);
+  let searchItems = STORE.items.filter(val => val.name === item);
+  return searchItems;
+}
+
+// handle items search
+
+function handleItemSearch() {
+  $('#js-shopping-list-search').submit(event => {
+    event.preventDefault();
+    let searchItems = itemSearch();
+    renderShoppingList(searchItems);
+  });
+}
+
+
+
 // run all the functions
 
 function handleShoppingList() {
@@ -114,6 +186,8 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
+  handleSortChange();
+  handleItemSearch();
 }
 
 handleShoppingList();
