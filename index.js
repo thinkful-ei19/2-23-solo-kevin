@@ -36,7 +36,6 @@ function generateShoppingItemsString(shoppingList){
   return items.join('');
 }
 
-
 // render shopping list function to the DOM
 
 function renderShoppingList() {
@@ -48,14 +47,23 @@ function renderShoppingList() {
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
+// add a new item to the shopping list (STORE ^^^)
+
+function addItemToShoppingList(itemName) {
+  console.log(`Adding "${itemName}" to shopping list`);
+  STORE.push({name: itemName, checked: false});
+}
+
 // create new item on shopping list 
 
 function handleNewItemSubmit() {
   $('#js-shopping-list-form').submit(function(event) {
     event.preventDefault();
+    console.log('`handleNewItemSubmit` ran');
     const newItemName = $('.js-shopping-list-entry').val();
-    console.log(newItemName);
-    $('.js-shopping-list-entry').val('') 
+    $('.js-shopping-list-entry').val('');
+    addItemToShoppingList(newItemName);
+    renderShoppingList();
   });
 }
 
