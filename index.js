@@ -90,11 +90,21 @@ function handleItemCheckClicked() {
   })
 }
 
+// delete an item from STORE
+
+function removeItemFromList(itemIndex) {
+  STORE.splice(itemIndex, 1);
+}
+
 // delete items from shopping list
 
 function handleDeleteItemClicked() {
-
-  console.log('`handleDeleteItemClicked` ran');
+  $('.js-shopping-list').on('click', '.js-item-delete', event => {
+    console.log('`handleItemDeleteClicked` ran');
+    const itemIndex = getItemIndexFromElement(event.currentTarget);
+    removeItemFromList(itemIndex);
+    renderShoppingList();
+  });
 }
 
 // run all the functions
