@@ -151,7 +151,7 @@ function editItem(itemID) {
 }
 
 function handleEditItem() {
-  $('#js-shopping-list-edit-entry').submit(event => {
+  $('.js-shopping-list').on('submit', '#js-shopping-list-edit-entry', event => {
     event.preventDefault();
     const itemID = getItemIndexFromElement(event.currentTarget);
     editItem(itemID);
