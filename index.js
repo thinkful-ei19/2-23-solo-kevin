@@ -147,8 +147,7 @@ function handleItemSearch() {
 
 function editItem() {
   let item = $('.js-shopping-list-edit-entry').val();
-  let editItem = STORE.items.filter(val => val.name === item);
-  return editItem;
+  STORE.items.find(item => item.id === itemID).checked = !STORE.items.find(item => item.id === itemID).checked;
 }
 
 function handleEditItem() {
