@@ -121,17 +121,27 @@ function handleSortChange() {
   });
 }
 
+function getItemCharacters(item) {
+  return item.split('');
+}
+
 function itemSearch() {
   let item = $('.js-shopping-list-search-entry').val();
-  let searchItems = STORE.items.filter(val => val.name === item);
-  return searchItems;
+  const itemChars = getItemCharacters(item);
+  console.log(itemChars);
+
+  if (item === itemChars) {
+    
+  }
+  STORE.items = STORE.items.filter(newVal => newVal.name === item);
 }
 
 function handleItemSearch() {
   $('#js-shopping-list-search').submit(event => {
     event.preventDefault();
-    let searchItems = itemSearch();
-    renderShoppingList(searchItems);
+    itemSearch();
+    console.log(STORE.items);
+    renderShoppingList();
   });
 }
 
