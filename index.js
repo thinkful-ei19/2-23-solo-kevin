@@ -144,8 +144,7 @@ function editItem() {
 function handleEditItem() {
   $('#js-shopping-list-edit-entry').submit(event => {
     event.preventDefault();
-    let editItem = editItem();
-    renderShoppingList(editItem);
+    renderShoppingList();
   });
 }
 
