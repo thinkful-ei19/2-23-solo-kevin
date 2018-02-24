@@ -88,8 +88,8 @@ function getItemIndexFromElement(item) {
 
 function handleItemCheckClicked() {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
-    const itemIndex = getItemIndexFromElement(event.currentTarget);
-    toggleCheckedForListItem(itemIndex);
+    const itemID = getItemIndexFromElement(event.currentTarget);
+    toggleCheckedForListItem(itemID);
     renderShoppingList();
   });
 }
@@ -145,14 +145,16 @@ function handleItemSearch() {
   });
 }
 
-function editItem() {
+function editItem(itemID) {
   let item = $('.js-shopping-list-edit-entry').val();
-  STORE.items.find(item => item.id === itemID).checked = !STORE.items.find(item => item.id === itemID).checked;
+  STORE.items.find(item => item.id === itemID).name = item;
 }
 
 function handleEditItem() {
   $('#js-shopping-list-edit-entry').submit(event => {
     event.preventDefault();
+    const itemID = getItemIndexFromElement(event.currentTarget);
+    editItem(itemID);
     renderShoppingList();
   });
 }
